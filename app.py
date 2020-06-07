@@ -156,9 +156,9 @@ def venues():
             "state": location[1],
             "venues": []
         })
-    
+
     for venue in venues:
-        num_upcoming_shows=0
+        num_upcoming_shows = 0
 
         shows = Show.query.filter_by(venue_id=venue.id).all()
 
@@ -166,8 +166,8 @@ def venues():
 
         for show in shows:
             if show.start_time > current_date:
-                num_upcoming_shows +=1
-        
+                num_upcoming_shows += 1
+
         for venue_location in data:
             if venue.state == venue_location['state'] and venue.city == venue_location['city']:
                 venue_location['venues'].append({
@@ -175,7 +175,6 @@ def venues():
                     "name": venue.name,
                     "num_upcoming_shows": num_upcoming_shows
                 })
-
 
     return render_template('pages/venues.html', areas=data)
 
@@ -193,12 +192,12 @@ def search_venues():
     #         "num_upcoming_shows": 0,
     #     }]
     # }
-    search_term = request.form.get('search_term','')
+    search_term = request.form.get('search_term', '')
     venue_result = Venue.query.filter(Venue.name.ilike(f'%{search_term}%'))
 
     response = {
-        "count" : venue_result.count(),
-        "data" : venue_result
+        "count": venue_result.count(),
+        "data": venue_result
     }
 
     return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
@@ -290,23 +289,23 @@ def show_venue(venue_id):
 
     venue = Venue.query.get(venue_id)
     shows = Show.query.filter_by(venue_id=venue_id).all()
-    
+
     past_shows = []
     upcoming_shows = []
     present_time = datetime.now()
 
     for show in shows:
         data = {
-            "artist_id" : show.artist_id,
-            "artist_name" : show.Artist.name,
-            "artist_image_link" : show.Artist.image_link,
+            "artist_id": show.artist_id,
+            "artist_name": show.Artist.name,
+            "artist_image_link": show.Artist.image_link,
             "start_time": format_datetime(str(show.start_time))
         }
         if show.start_time > present_time:
             upcoming_shows.append(data)
         else:
             past_shows.append(data)
-    
+
     data = {
         "id": venue.id,
         "name": venue.name,
@@ -343,27 +342,27 @@ def create_venue_submission():
     # TODO: insert form data as a new Venue record in the db, instead
     # TODO: modify data to be the data object returned from db insertion
     try:
-    # get form data and create 
+        # get form data and create
         form = VenueForm()
         venue = Venue(name=form.name.data, city=form.city.data, state=form.state.data, address=form.address.data,
-                    phone=form.phone.data, image_link=form.image_link.data,genres=form.genres.data, 
-                    facebook_link=form.facebook_link.data, seeking_description=form.seeking_description.data,
-                    website=form.website.data, seeking_talent=form.seeking_talent.data)
-        
+                      phone=form.phone.data, image_link=form.image_link.data, genres=form.genres.data,
+                      facebook_link=form.facebook_link.data, seeking_description=form.seeking_description.data,
+                      website=form.website.data, seeking_talent=form.seeking_talent.data)
+
         # commit session to database
         db.session.add(venue)
         db.session.commit()
 
-        # flash success 
+        # flash success
         flash('Venue ' + request.form['name'] + ' was successfully listed!')
     except:
         # catches errors
         db.session.rollback()
-        flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
+        flash('An error occurred. Venue ' +
+              request.form['name'] + ' could not be listed.')
     finally:
         # closes session
         db.session.close()
-
 
     # TODO: on unsuccessful db insert, flash an error instead.
     # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
