@@ -29,6 +29,12 @@
 		<p>
 			<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
 		</p>
+		<section>
+			<button id="editVenue" onclick="editVenue(event)" class="btn btn-primary btn-lg" style="margin: 0 20px;"
+			  data-id="{{ venue.id }}">Edit</button>
+			<button id="deleteVenue" onclick="deleteVenue(event)" class="btn btn-primary btn-lg"
+			  data-id="{{ venue.id }}">Delete</button>
+		</section>
 		{% if venue.seeking_talent %}
 		<div class="seeking">
 			<p class="lead">Currently seeking talent</p>
@@ -74,6 +80,15 @@
 		{% endfor %}
 	</div>
 </section>
+<script>
+	const deleteBtn = document.getElementById('deleteVenue')
+	deleteBtn.onclick = function(e) {
+		const venue_id = e.target.dataset['id']
+		fetch('/venues/'+venue_id, {
+			method: "DELETE"
+		});
+	}
+</script>
 
 {% endblock %}
 
