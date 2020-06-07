@@ -1,7 +1,13 @@
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, URL, ValidationError
+import re
+
+
+def validate_phone(form, field):
+    if not re.search(r"^[0-9]*$", field.data):
+        raise ValidationError("Phone number should only contain digits.")
 
 
 class ShowForm(Form):
@@ -85,7 +91,7 @@ class VenueForm(Form):
         'address', validators=[DataRequired()]
     )
     phone = StringField(
-        'phone'
+        'phone', validators=[validate_phone]
     )
     image_link = StringField(
         'image_link'
@@ -195,14 +201,12 @@ class ArtistForm(Form):
         ]
     )
     phone = StringField(
-        # TODO implement validation logic for state
-        'phone'
+        'phone', validators=[validate_phone]
     )
     image_link = StringField(
         'image_link'
     )
     genres = SelectMultipleField(
-        # TODO implement enum restriction
         'genres', validators=[DataRequired()],
         choices=[
             ('Alternative', 'Alternative'),
@@ -238,5 +242,3 @@ class ArtistForm(Form):
     website = StringField(
         'website', validators=[URL()]
     )
-
-# TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
